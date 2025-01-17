@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #bgVideo {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .dot-container-1 {
+            position: absolute;
+            top: 10.7vh;
+            left: 11vw;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .dot-container-2 {
+            position: absolute;
+            top: 46vh;
+            left: 23vw;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .dot-container-3 {
+            position: absolute;
+            top: 57vh;
+            left: 38vw;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .dot-container-4 {
+            position: absolute;
+            top: 70vh;
+            left: 60vw;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .dot-container-5 {
+            position: absolute;
+            top: 65vh;
+            left: 77vw;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        @media screen and (max-width: 1366px) {
+            .dot-container-1 {
+                top: 10.2vh;
+                left: 12vw;
+            }
+            .dot-container-2 {
+                top: 45vh;
+                left: 24vw;
+            }
+            .dot-container-3 {
+                top: 56vh;
+                left: 39vw;
+            }
+            .dot-container-4 {
+                top: 69vh;
+                left: 61vw;
+            }
+            .dot-container-5 {
+                top: 64vh;
+                left: 78vw;
+            }
+        }
+
+        @media screen and (max-width: 1024px) {
+            .dot-container-1 {
+                top: 9.8vh;
+                left: 13vw;
+            }
+            .dot-container-2 {
+                top: 44vh;
+                left: 25vw;
+            }
+            .dot-container-3 {
+                top: 55vh;
+                left: 40vw;
+            }
+            .dot-container-4 {
+                top: 68vh;
+                left: 62vw;
+            }
+            .dot-container-5 {
+                top: 63vh;
+                left: 79vw;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .dot-container-1 {
+                top: 9.5vh;
+                left: 15vw;
+            }
+            .dot-container-2 {
+                top: 43vh;
+                left: 27vw;
+            }
+            .dot-container-3 {
+                top: 54vh;
+                left: 42vw;
+            }
+            .dot-container-4 {
+                top: 67vh;
+                left: 64vw;
+            }
+            .dot-container-5 {
+                top: 62vh;
+                left: 81vw;
+            }
+        }
+
+        .fixed-dot {
+            position: relative;
+            width: 0.8vw;
+            height: 0.8vw;
+            min-width: 8px;
+            min-height: 8px;
+            background: #ff0000;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+
+        .fixed-dot:hover {
+            transform: scale(1.2);
+        }
+
+        /* Frame overlay stilleri */
+        .frame-overlay {
+            position: absolute;
+            top: -55px;
+            left: 15px;
+            width: clamp(150px, 15vw, 200px);
+            height: clamp(150px, 15vw, 200px);
+            display: none;
+            z-index: 1;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .frame-overlay.active {
+            display: block;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .frame-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .frame-overlay:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Dot container hover stilleri */
+        .dot-container-1:hover .frame-overlay,
+        .dot-container-2:hover .frame-overlay,
+        .dot-container-3:hover .frame-overlay,
+        .dot-container-4:hover .frame-overlay {
+            display: block;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Menü stili */
+        .menu {
+            position: fixed;
+            top: 20px;
+            right: 50px;
+            z-index: 1000;
+        }
+
+        .menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        .menu li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .menu li a:hover {
+            color: #ccc;
+        }
+
+        /* Sayfa stilleri */
+        .pages-container {
+            position: fixed;
+            width: 400vw;
+            height: 100vh;
+            display: flex;
+            transition: transform 0.5s ease;
+            overflow: hidden;
+        }
+
+        .section {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            width: 80%;
+            max-width: 800px;
+            text-align: left;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        .content-box {
+            width: 100%;
+        }
+
+        .content h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .content p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .content ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .content ul li {
+            margin-bottom: 10px;
+        }
+
+        .contact-info {
+            margin-top: 20px;
+        }
+
+        .contact-info p {
+            margin-bottom: 10px;
+        }
+
+        /* Ana sayfa için content'i gizle */
+        #home .content {
+            display: none;
+        }
+
+        /* Diğer sayfalar için video arkasında kalmasın */
+        .section:not(#home) .dot-container-1,
+        .section:not(#home) .dot-container-2,
+        .section:not(#home) .dot-container-3,
+        .section:not(#home) .dot-container-4,
+        .section:not(#home) .dot-container-5 {
+            display: none;
+        }
+
+        /* Her section'ın kendi videosu için stil */
+        .section video {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .content::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Duyuru kutusu stili */
+        .announcement-box {
+            position: absolute;
+            top: -100px;
+            left: 15px;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1;
+            color: #333;
+            cursor: default;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .announcement-box.active {
+            display: block;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .announcement-box h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .announcement-box p {
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .announcement-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .announcement-link:hover {
+            color: #004499;
+            text-decoration: underline;
+        }
+
+        /* Dot5 için frame-overlay'i gizle */
+        .dot-container-5 .frame-overlay {
+            display: none;
+        }
+
+        /* Dot5 hover stilini güncelle */
+        .dot-container-5:hover .announcement-box {
+            display: block;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Duyurular sayfası için özel stiller */
+        #announcements {
+            background: #000;
+        }
+
+        #announcements .content {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: transparent;
+            padding: 40px;
+            box-shadow: none;
+        }
+
+        .announcements-list {
+            display: grid;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        #announcements .content h1 {
+            color: #fff;
+            font-size: 42px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .announcement-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #0066cc;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .announcement-item:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .announcement-item h3 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .announcement-item .date {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .announcement-item p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menü -->
+    <nav class="menu">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Sayfalar -->
+    <div class="pages-container">
+        <!-- Ana Sayfa -->
+        <section id="home" class="section active">
+            <video id="bgVideo" autoplay muted playsinline>
+                <source src="vids/anim.mp4" type="video/mp4">
+            </video>
+            <div class="dot-container-1">
+                <div class="fixed-dot"></div>
+                <div class="frame-overlay">
+                    <img src="imgs/img1.png" alt="Görsel 1" title="Görsel 1">
+                </div>
+            </div>
+            <div class="dot-container-2">
+                <div class="fixed-dot"></div>
+                <a href="#about" class="frame-overlay">
+                    <img src="imgs/img2.png" alt="Hakkımızda" title="Hakkımızda sayfasına git">
+                </a>
+            </div>
+            <div class="dot-container-3">
+                <div class="fixed-dot"></div>
+                <a href="#services" class="frame-overlay">
+                    <img src="imgs/img3.png" alt="Hizmetlerimiz" title="Hizmetler sayfasına git">
+                </a>
+            </div>
+            <div class="dot-container-4">
+                <div class="fixed-dot"></div>
+                <a href="#contact" class="frame-overlay">
+                    <img src="imgs/img4.png" alt="İletişim" title="İletişim sayfasına git">
+                </a>
+            </div>
+            <div class="dot-container-5">
+                <div class="fixed-dot"></div>
+                <div class="announcement-box">
+                    <h3>Önemli Duyuru</h3>
+                    <p>Yeni ürünümüz için ön kayıtlar başlamıştır. İlk 100 kayıt yaptıran müşterimize özel indirim fırsatları sunuyoruz.</p>
+                    <a href="https://www.google.com" class="announcement-link" target="_blank">Detaylı bilgi için tıklayın →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Sayfası -->
+        <section id="about" class="section">
+            <video id="bgVideo2" autoplay muted playsinline>
+                <source src="vids/anim2.mp4" type="video/mp4">
+            </video>
+            <div class="content">
+                <h1>Hakkımızda</h1>
+                <div class="content-box">
+                    <p>Firmamız, teknoloji ve inovasyon alanında öncü bir kuruluş olarak, müşterilerimize en yüksek kalitede hizmet sunmayı hedeflemektedir.</p>
+                    <p>20 yılı aşkın deneyimimiz ve uzman kadromuzla, dijital dönüşüm süreçlerinizde yanınızdayız.</p>
+                    <p>Vizyonumuz, teknolojik çözümlerle işletmelerin geleceğine yön vermek ve sürdürülebilir başarı hikayeleri yaratmaktır.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Sayfası -->
+        <section id="services" class="section">
+            <video id="bgVideo3" autoplay muted playsinline>
+                <source src="vids/anim3.mp4" type="video/mp4">
+            </video>
+            <div class="content">
+                <h1>Hizmetlerimiz</h1>
+                <div class="content-box">
+                    <p>Size sunduğumuz başlıca hizmetler:</p>
+                    <ul>
+                        <li>Yazılım Geliştirme</li>
+                        <li>Web Tasarım</li>
+                        <li>Mobil Uygulama Geliştirme</li>
+                        <li>Dijital Pazarlama</li>
+                        <li>IT Danışmanlığı</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Sayfası -->
+        <section id="contact" class="section">
+            <video id="bgVideo4" autoplay muted playsinline>
+                <source src="vids/anim4.mp4" type="video/mp4">
+            </video>
+            <div class="content">
+                <h1>İletişim</h1>
+                <div class="content-box">
+                    <p>Bizimle iletişime geçin:</p>
+                    <div class="contact-info">
+                        <p><strong>Adres:</strong> Teknoloji Mahallesi, İnovasyon Caddesi No:123</p>
+                        <p><strong>Telefon:</strong> +90 (212) 555 44 33</p>
+                        <p><strong>E-posta:</strong> info@sirketimiz.com</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('bgVideo');
+            const dotContainer1 = document.querySelector('.dot-container-1');
+            const dotContainer2 = document.querySelector('.dot-container-2');
+            const dotContainer3 = document.querySelector('.dot-container-3');
+            const dotContainer4 = document.querySelector('.dot-container-4');
+            const dotContainer5 = document.querySelector('.dot-container-5');
+
+            let isFirstPlay = true;
+            const playedVideos = new Set(); // Oynatılan videoları takip etmek için
+
+            // Tüm videoları bir kez oynatıp durduracak fonksiyon
+            function setupVideo(video) {
+                if (!video) return;
+                
+                const videoId = video.id;
+                if (!playedVideos.has(videoId)) {
+                    video.currentTime = 0;
+                    video.play();
+                    playedVideos.add(videoId);
+                    
+                    // Video bittiğinde sadece durdur, başa sarma
+                    video.addEventListener('ended', () => {
+                        video.pause();
+                    });
+                }
+            }
+
+            // Ana video için event listener
+            video.addEventListener('ended', () => {
+                video.pause();
+            });
+
+            // İlk video için timeupdate listener'ı bir kere tanımlayalım
+            function setupInitialDots() {
+                // Önceki event listener'ları temizle
+                video.removeEventListener('timeupdate', handleTimeUpdate);
+                video.addEventListener('timeupdate', handleTimeUpdate);
+            }
+
+            // Timeupdate handler fonksiyonu
+            function handleTimeUpdate() {
+                if (currentSection === 0) { // Sadece ana sayfadayken çalışsın
+                    if (video.currentTime >= 0.2) dotContainer1.style.opacity = '1';
+                    if (video.currentTime >= 0.4) dotContainer2.style.opacity = '1';
+                    if (video.currentTime >= 0.6) dotContainer3.style.opacity = '1';
+                    if (video.currentTime >= 0.8) dotContainer4.style.opacity = '1';
+                    if (video.currentTime >= 1.0) dotContainer5.style.opacity = '1';
+                }
+            }
+
+            // Sayfa yüklendiğinde ilk dot kontrolünü başlat
+            setupInitialDots();
+
+            // Dot'ların görünürlüğünü kontrol et
+            function updateDots() {
+                if (currentSection === 0) {
+                    // Ana sayfaya döndüğümüzde dot'ları göster
+                    if (video.currentTime >= 0.2) dotContainer1.style.opacity = '1';
+                    if (video.currentTime >= 0.4) dotContainer2.style.opacity = '1';
+                    if (video.currentTime >= 0.6) dotContainer3.style.opacity = '1';
+                    if (video.currentTime >= 0.8) dotContainer4.style.opacity = '1';
+                    if (video.currentTime >= 1.0) dotContainer5.style.opacity = '1';
+                } else {
+                    [dotContainer1, dotContainer2, dotContainer3, dotContainer4, dotContainer5].forEach(container => {
+                        container.style.opacity = '0';
+                    });
+                }
+            }
+
+            const menu = document.querySelectorAll('.menu a');
+            const sections = document.querySelectorAll('.section');
+            const pagesContainer = document.querySelector('.pages-container');
+            
+            let currentSection = 0;
+            let isScrolling = false;
+
+            // Scroll olayını dinle
+            window.addEventListener('wheel', (e) => {
+                if (isScrolling) return;
+                
+                isScrolling = true;
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 1000);
+
+                if (e.deltaY > 0 && currentSection < sections.length - 1) {
+                    currentSection++;
+                } else if (e.deltaY < 0 && currentSection > 0) {
+                    currentSection--;
+                }
+
+                updateSection();
+            });
+
+            function updateSection() {
+                pagesContainer.style.transform = `translateX(-${currentSection * 100}vw)`;
+                
+                // Diğer videoları duraklat (ana video hariç)
+                sections.forEach((section, index) => {
+                    if (index !== 0) {
+                        const sectionVideo = section.querySelector('video');
+                        if (sectionVideo && !playedVideos.has(sectionVideo.id)) {
+                            sectionVideo.pause();
+                            sectionVideo.currentTime = 0;
+                        }
+                    }
+                });
+                
+                // Aktif bölümün videosunu oynat (ana sayfa hariç)
+                if (currentSection !== 0) {
+                    const activeVideo = sections[currentSection].querySelector('video');
+                    setupVideo(activeVideo);
+                }
+
+                // Dot'ları güncelle
+                updateDots();
+            }
+
+            // İlk videoyu başlat
+            if (isFirstPlay) {
+                setupVideo(video);
+                isFirstPlay = false;
+            }
+
+            // Sayfa geçişi fonksiyonu
+            function goToSection(targetId) {
+                const targetIndex = Array.from(sections).findIndex(
+                    section => section.id === targetId
+                );
+                if (targetIndex !== -1) {
+                    currentSection = targetIndex;
+                    updateSection();
+                }
+            }
+
+            // Menü tıklama olayları
+            document.querySelectorAll('.menu a').forEach((link) => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').replace('#', '');
+                    goToSection(targetId);
+                });
+            });
+
+            // Frame overlay tıklama olayları
+            document.querySelectorAll('.frame-overlay').forEach(overlay => {
+                overlay.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = overlay.getAttribute('href').replace('#', '');
+                    goToSection(targetId);
+                });
+            });
+
+            // Dot container tıklama olayları güncelleme
+            document.querySelectorAll('.dot-container-2, .dot-container-3, .dot-container-4, .dot-container-5').forEach(container => {
+                container.addEventListener('click', (e) => {
+                    const overlay = container.querySelector('.frame-overlay');
+                    const announcement = container.querySelector('.announcement-box');
+                    
+                    if (overlay) {
+                        const targetId = overlay.getAttribute('href').replace('#', '');
+                        goToSection(targetId);
+                    } else if (announcement) {
+                        // Dot5 için direkt tıklamada bir şey yapma
+                        return;
+                    }
+                });
+            });
+
+            // Frame overlay ve announcement box için mouse takibi
+            document.querySelectorAll('.dot-container-1, .dot-container-2, .dot-container-3, .dot-container-4, .dot-container-5').forEach(container => {
+                const overlay = container.querySelector('.frame-overlay');
+                const announcement = container.querySelector('.announcement-box');
+                let isOverlayHovered = false;
+                let isAnnouncementHovered = false;
+
+                container.addEventListener('mouseenter', () => {
+                    if (overlay) overlay.classList.add('active');
+                    if (announcement) announcement.classList.add('active');
+                });
+
+                if (overlay) {
+                    overlay.addEventListener('mouseenter', () => {
+                        isOverlayHovered = true;
+                    });
+
+                    overlay.addEventListener('mouseleave', () => {
+                        isOverlayHovered = false;
+                        setTimeout(() => {
+                            if (!isOverlayHovered) {
+                                overlay.classList.remove('active');
+                            }
+                        }, 100);
+                    });
+                }
+
+                if (announcement) {
+                    announcement.addEventListener('mouseenter', () => {
+                        isAnnouncementHovered = true;
+                    });
+
+                    announcement.addEventListener('mouseleave', () => {
+                        isAnnouncementHovered = false;
+                        setTimeout(() => {
+                            if (!isAnnouncementHovered) {
+                                announcement.classList.remove('active');
+                            }
+                        }, 100);
+                    });
+                }
+
+                container.addEventListener('mouseleave', () => {
+                    setTimeout(() => {
+                        if (!isOverlayHovered && !isAnnouncementHovered) {
+                            if (overlay) overlay.classList.remove('active');
+                            if (announcement) announcement.classList.remove('active');
+                        }
+                    }, 100);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
